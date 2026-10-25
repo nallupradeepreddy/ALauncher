@@ -1,0 +1,54 @@
+#!/bin/sh
+# ALauncher Pre-Commit Hook
+# Automatically verifies unit tests, Play Console pre-launch audit, and lint before allowing a commit.
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$REPO_ROOT"
+
+echo "========================================================"
+echo "🔍 [ALauncher Pre-Commit] Running unit tests & Play Console audit..."
+echo "========================================================"
+
+./gradlew testDebugUnitTest
+TEST_EXIT_CODE=$?
+
+if [ $TEST_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ [ALauncher Pre-Commit] Unit tests or Play Console audit failed!"
+    echo "Please fix the failures before committing."
+    exit 1
+fi
+
+echo ""
+echo "========================================================"
+echo "📊 [ALauncher Pre-Commit] Generating test coverage report & verifying threshold..."
+echo "========================================================"
+
+./gradlew jacocoTestReport
+REPORT_EXIT_CODE=$?
+
+if [ $REPORT_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ [ALauncher Pre-Commit] Coverage report generation failed!"
+    exit 1
+fi
+echo "Coverage report: app/build/reports/jacoco/jacocoTestReport/html/index.html"
+
+echo ""
+echo "========================================================"
+echo "🔍 [ALauncher Pre-Commit] Running Android Lint..."
+echo "========================================================"
+
+./gradlew lintDebug
+LINT_EXIT_CODE=$?
+
+if [ $LINT_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ [ALauncher Pre-Commit] Lint checks failed!"
+    echo "Please fix the lint errors before committing."
+    exit 1
+fi
+
+echo ""
+echo "✅ [ALauncher Pre-Commit] All automated tests, policy audits, and lint checks passed!"
+exit 0

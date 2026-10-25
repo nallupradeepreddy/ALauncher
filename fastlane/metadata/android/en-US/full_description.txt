@@ -1,0 +1,72 @@
+Reclaim your focus. ALauncher is a clean, distraction-free Android launcher built for people who want their phone to work for them, not against them.
+
+ALauncher is 100% free and open-source forever with zero subscriptions. Runs completely offline with no ads, tracking, or accounts. Your notifications, app usage, and preferences never leave your device.
+
+━━━━━━━━━━━━━━━━━━━━
+✨ WHY ALAUNCHER?
+━━━━━━━━━━━━━━━━━━━━
+
+📵 MINIMAL HOME SCREEN
+Typography-first interface with a clean clock, up to 10 favorite apps, and zero visual clutter. No distracting wallpapers screaming for attention — just you and what matters.
+
+🔔 SMART NOTIFICATION FILTER & SEARCH
+Filter alerts into Priority, Normal, and Muted. Distracting promo alerts stay out of your status bar and are organized into your custom Notification Center for mindful review. Instant in-memory search lets you find notifications in milliseconds. Never miss an important OTP, calendar meeting, or ride update.
+
+🧘 FOCUS MODE & QUIET HOURS
+One-tap Deep Work mode silences distractions except what you allow. Schedule automated Quiet Hours for better sleep. Urgent meetings and OTPs safely bypass filters.
+
+🏝️ DYNAMIC CONTEXTUAL ISLAND
+Glanceable real-time alerts on your home screen. Track deliveries, rides, calendar reminders, OTPs, active timers, hotspot status, Bluetooth battery, and bank alerts with per-category privacy toggles.
+
+🔍 INSTANT SEARCH, MATH & CONVERSIONS
+Trie-based search with zero typing lag. Launch apps, evaluate arithmetic (e.g., "45 * 12", "15% of 850"), convert units offline (e.g., "10 km in miles", "70 kg in lbs"), or access app shortcuts.
+
+👉 FLUID GESTURE NAVIGATION
+Swipe up to search apps. Swipe down for notification center. Double-tap empty space to lock screen. Swipe right on any app for shortcuts. Everything is a natural thumb motion away.
+
+🧰 PRODUCTIVITY DOCK
+Universal clipboard history, instant notes, and quick assistant access — always thumb-reachable.
+
+📊 DIGITAL WELLBEING & DETOX
+Set daily app limits, receive gentle take-a-break reminders, and break doomscrolling habits with built-in digital minimalism tools.
+
+━━━━━━━━━━━━━━━━━━━━
+🔒 ACCESSIBILITY SERVICE USAGE
+━━━━━━━━━━━━━━━━━━━━
+ALauncher includes an optional "Double-Tap to Lock" feature to turn off and lock your screen by double-tapping empty space on the home screen.
+
+To provide this, ALauncher uses Android's AccessibilityService API:
+• Purpose: Solely used to trigger the screen lock action (GLOBAL_ACTION_LOCK_SCREEN).
+• Preserves Biometrics: Acts just like pressing the physical power button, ensuring Fingerprint and Face Unlock continue to work normally.
+• Privacy Guarantee: ALauncher does NOT collect, read, store, or transmit any personal data, keystrokes, screen content, or sensitive information.
+• User Controlled: Entirely optional, disabled by default, and can be revoked at any time in Android Accessibility Settings.
+
+━━━━━━━━━━━━━━━━━━━━
+🔐 100% PRIVATE & OFFLINE
+━━━━━━━━━━━━━━━━━━━━
+
+• Free forever — no subscriptions, paywalls, or ads
+• 100% offline — INTERNET permission is not requested in the manifest
+• Zero telemetry, zero analytics, zero data collection
+• All notifications, usage, and clipboard data stay strictly on-device
+• Lightweight, battery-friendly, and private by design
+
+━━━━━━━━━━━━━━━━━━━━
+🌐 100% FREE & OPEN SOURCE
+━━━━━━━━━━━━━━━━━━━━
+
+ALauncher is transparent, community-driven, and licensed under GPL-3.0. You can inspect the source code, contribute, or build it yourself:
+https://github.com/nallupradeepreddy/ALauncher
+
+━━━━━━━━━━━━━━━━━━━━
+🎯 PERFECT FOR
+━━━━━━━━━━━━━━━━━━━━
+
+✔ Minimalists wanting a clean, aesthetic home screen
+✔ Deep workers, students, and productivity-focused creators
+✔ Privacy-conscious users wanting a zero-tracker, offline launcher
+✔ Anyone fighting screen addiction and notification overload
+
+━━━━━━━━━━━━━━━━━━━━
+
+Install ALauncher — go minimal in 30 seconds. Free forever. Just focus.

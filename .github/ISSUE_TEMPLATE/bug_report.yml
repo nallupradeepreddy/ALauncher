@@ -1,0 +1,67 @@
+name: 🐛 Bug Report
+description: Create a report to help us fix an issue in ALauncher.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please ensure you have searched existing issues to verify this bug hasn't already been reported.
+  - type: input
+    id: version
+    attributes:
+      label: ALauncher Version
+      description: What version of ALauncher are you running? (Found in Settings -> About)
+      placeholder: e.g. 1.4.0 (38)
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device & OS
+      description: What device and Android version are you using?
+      placeholder: e.g. Pixel 8 Pro, Android 15 (AP2A.240805.005) or Samsung S24, OneUI 6.1
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what happened.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions on how to reproduce the issue.
+      placeholder: |
+        1. Open Home Screen
+        2. Swipe down to open Notification Center
+        3. Tap on notification stack for app 'X'
+        4. See crash or unexpected layout
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: logcat
+    attributes:
+      label: Logcat / Crash Logs (if applicable)
+      description: Please paste relevant logcat outputs or stack traces here.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Validation Checklist
+      options:
+        - label: I have searched existing issues and confirmed this is not a duplicate.
+          required: true
+        - label: I am running an official build of ALauncher or building directly from the latest `main` branch.
+          required: true
+

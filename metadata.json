@@ -1,0 +1,6 @@
+{
+  "name": "Alauncher",
+  "description": "Minimalist fast Android launcher with notification filtering, focus mode, and custom command search.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

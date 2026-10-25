@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/nallupradeepreddy/ALauncher/discussions
+    about: Ask questions, share your home screen setups, and discuss ideas with the community.
+  - name: 🔒 Report a Security Vulnerability
+    url: https://github.com/nallupradeepreddy/ALauncher/blob/main/SECURITY.md
+    about: Privately report security or privacy concerns directly to maintainers.
+

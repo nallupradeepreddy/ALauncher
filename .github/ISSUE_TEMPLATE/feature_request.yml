@@ -1,0 +1,47 @@
+name: 💡 Feature Request
+description: Propose a new idea or enhancement for ALauncher.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ALauncher is committed to an ultra-minimal, distraction-free, and battery-friendly experience. Before proposing a feature, please consider whether it aligns with our philosophy of simplicity and speed.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of the friction or limitation you encounter.
+      placeholder: "I'm always frustrated when..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe what you would like ALauncher to do and how it should behave.
+    validations:
+      required: true
+  - type: textarea
+    id: philosophy
+    attributes:
+      label: Alignment with Minimalist Philosophy
+      description: How does this proposed feature preserve simplicity, low battery consumption, and distraction-free operation?
+      placeholder: "This feature preserves minimalism because it..."
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions Considered
+      description: Describe any alternative solutions or workarounds you've evaluated.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and feature discussions to avoid duplicates.
+          required: true
+        - label: I understand that features adding bloat, heavy animations, or complex dashboard widgets may be declined to preserve the launcher's minimalist design.
+          required: true
+

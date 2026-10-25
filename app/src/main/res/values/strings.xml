@@ -1,0 +1,351 @@
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="DuplicateStrings,PluralsCandidate">
+    <string name="app_name">Alauncher</string>
+    <string name="settings_title">Launcher Settings</string>
+    <string name="back_desc">Back</string>
+    <string name="set_default_launcher">Set as Default Launcher</string>
+    <string name="set_default_launcher_desc">Make this your permanent, distraction-free minimalist home screen.</string>
+    <string name="already_default">Already set as your default launcher!</string>
+    <string name="home_shortcuts_title">Home Shortcuts (Max 10)</string>
+    <string name="home_shortcuts_desc">Define and order the apps on your main screen.</string>
+    <string name="no_home_apps">No applications assigned to home yet. (Using pinned fallbacks)</string>
+    <string name="add_home_apps">Manage Home Screen Apps</string>
+    <string name="immediate_notifications">Immediate Notifications</string>
+    <string name="visual_theme">Visual Atmosphere</string>
+    <string name="home_app_alignment">Home App Alignment</string>
+    <string name="show_icons_desc">Uncheck to yield a minimalist text-only app index.</string>
+    <string name="quiet_hours_silence">Quiet Hours Silence</string>
+    <string name="quiet_hours_desc">Mutes standard alerts and lists Priority updates only.</string>
+    <string name="backup_porting">Backup &amp; Local Porting</string>
+    <string name="export_backup">Export Backup JSON</string>
+    <string name="import_backup">Import JSON Backup</string>
+    <string name="copy_code">Copy Code</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+    <string name="done">Done</string>
+    <string name="import_settings">Import Settings</string>
+
+    <string name="app_time_limits">App Time Limits</string>
+    <string name="enable_app_time_limits">Enable App Time Limits</string>
+
+    <string name="screen_timeout_title">Auto Screen Off Settings</string>
+    <string name="screen_timeout_desc">Open your device’s system settings to configure auto screen off / screen timeout.</string>
+
+    <string name="grant_overlay_permission">Grant Overlay Permission</string>
+    <string name="grant_usage_access_permission">Grant Usage Access Permission</string>
+    <string name="grant_calendar_permission">Grant Calendar Permission</string>
+    <string name="grant_bluetooth_permission">Grant Bluetooth Permission</string>
+    <string name="show_home_icons">Show Home App Icons</string>
+    <string name="show_home_icons_desc">Display app icons on the main Home Screen.</string>
+    <string name="show_home_labels">Show Home App Labels</string>
+    <string name="show_home_labels_desc">Display text labels next to home screen app icons.</string>
+    <string name="android_system_settings">Android System Settings</string>
+    <string name="android_system_settings_desc">Open primary device settings page.</string>
+    <string name="home_app_alignment_desc">Choose screen edge alignment for home screen apps.</string>
+    <string name="ambient_system_info_title">Connectivity &amp; System Info</string>
+    <string name="ambient_system_info_desc">Active Wi-Fi hotspot indicator and connected Bluetooth device names.</string>
+    <string name="ambient_device_states_title">Device Modes &amp; Battery</string>
+    <string name="ambient_device_states_desc">Charging status, Focus Mode stats, and DND / Quiet Hours updates.</string>
+    <string name="show_focus_mode_button_title">Show Focus Mode Button</string>
+    <string name="show_focus_mode_button_desc">Display the Focus Mode toggle button at the bottom of the App Search page.</string>
+    <string name="allow_meetings_in_focus_mode_title">Allow Meetings in Focus Mode &amp; Quiet Hours</string>
+    <string name="allow_meetings_in_focus_mode_desc">Allow calendar reminders, meeting links, and incoming calls to bypass Focus Mode and Quiet Hours.</string>
+    <string name="show_icons_title">Show App Icons in Search List</string>
+
+    <!-- Section Titles -->
+    <string name="section_system">⚙️  SYSTEM</string>
+    <string name="section_default_gestures">👆  Default Gestures</string>
+    <string name="section_home_screen">🏠  HOME SCREEN</string>
+    <string name="section_search_gestures">🔍  SEARCH &amp; GESTURES</string>
+    <string name="section_focus_notifications">🔕  FOCUS &amp; NOTIFICATIONS</string>
+    <string name="section_universal_thumb_dock">🛠️  UNIVERSAL THUMB DOCK</string>
+    <string name="section_contextual_island">🏝️  CONTEXTUAL ISLAND</string>
+    <string name="section_visual_theme">🎨  VISUAL STYLE &amp; THEME</string>
+    <string name="section_settings_lock_backup">💾  BACKUP &amp; PORTABILITY</string>
+
+    <!-- Lock Banner & UI Labels -->
+    <string name="search_apps_placeholder">Search apps</string>
+    <string name="settings_locked_notice">Settings are locked. Long press the lock icon to unlock.</string>
+    <string name="settings_unlocked_notice">Tap or long press lock icon to lock settings.</string>
+    <string name="toast_long_press_unlock">Long press to unlock settings</string>
+    <string name="toast_settings_locked">Settings locked</string>
+    <string name="toast_settings_unlocked">Settings unlocked!</string>
+    <string name="break_duration_label">Break Duration:</string>
+
+    <!-- Final Polish Localization -->
+    <string name="gesture_swipe_up_label">Swipe UP</string>
+    <string name="gesture_swipe_up_desc">App Search</string>
+    <string name="gesture_swipe_down_label">Swipe DOWN</string>
+    <string name="gesture_swipe_down_desc">Notification Drawer</string>
+    <string name="gesture_swipe_right_label">Swipe RIGHT (on App)</string>
+    <string name="gesture_swipe_right_desc">App Shortcuts</string>
+
+    <string name="settings_locked_label">Locked Settings</string>
+    <string name="settings_unlocked_label">Settings Unlocked</string>
+    <string name="lock_state_desc">Lock State</string>
+
+    <string name="sort_mode_title">App Search List Sorting</string>
+    <string name="sort_mode_desc">Select how the apps in the swiped-up App Drawer are sorted.</string>
+    <string name="sort_mode_alpha_asc">Alphabetical (A to Z)</string>
+    <string name="sort_mode_alpha_desc">Alphabetical (Z to A)</string>
+    <string name="sort_mode_favorites">Favorites First</string>
+    <string name="sort_mode_most_used">Most Used</string>
+    <string name="sort_mode_recently_opened">Recently Opened</string>
+
+    <string name="quiet_hours_start_label">Start HH:mm</string>
+    <string name="quiet_hours_end_label">End HH:mm</string>
+
+    <string name="app_time_limits_status_active">Active for %1$d apps (%2$ds break)</string>
+    <string name="disabled">Disabled</string>
+    <string name="limit_none">None</string>
+    <string name="limit_minutes">%1$dm</string>
+
+    <string name="enable">Enable</string>
+    <string name="thumb_dock_desc">Access Quick Notes, Clipboard, and Gemini by swiping from the edge of any app.</string>
+    <string name="thumb_dock_position_title">Position on Right Edge</string>
+    <string name="thumb_dock_position_desc">If unchecked, trigger is on Left edge.</string>
+
+    <string name="island_section_desc">Customize which categories of notifications and updates are allowed to flow into the Contextual Island.</string>
+    <string name="island_otp_title">One-Time Passwords (OTPs)</string>
+    <string name="island_otp_desc">Capture and copy OTP codes from messages.</string>
+    <string name="island_critical_title">Critical Device Alerts</string>
+    <string name="island_critical_desc">High battery temperature warnings or extreme low battery alerts.</string>
+    <string name="island_calendar_title">Calendar Integration</string>
+    <string name="island_calendar_desc">Required to surface upcoming meetings and agendas.</string>
+    <string name="island_meetings_title">Upcoming Calls &amp; Meetings</string>
+    <string name="island_meetings_desc">Calendar invites starting within 30 minutes with quick join links.</string>
+    <string name="island_meetings_apps_title">Meeting &amp; Calendar Apps</string>
+    <string name="installed_apps_allowed_count">%1$d installed apps allowed</string>
+    <string name="island_tasks_title">Timers, Calls &amp; Downloads</string>
+    <string name="island_tasks_desc">Active phone calls, file downloads, uploads, stopwatches, and timers.</string>
+    <string name="island_rides_title">Rides &amp; Deliveries</string>
+    <string name="island_rides_desc">Live updates from food, grocery, and ride apps.</string>
+    <string name="island_live_tracking_title">Enable Live Delivery Tracking</string>
+    <string name="island_live_tracking_desc">Show transient transit/cooking updates in Contextual Island.</string>
+    <string name="island_delivery_apps_title">Delivery &amp; Ride Apps</string>
+    <string name="island_system_status_title">Travel &amp; Tickets</string>
+    <string name="island_system_status_desc">Boarding passes, flight updates, train tickets, and travel transit cards.</string>
+    <string name="island_bills_title">Bills &amp; Transactions</string>
+    <string name="island_bills_desc">Transaction receipts, credits, refunds, bill due dates, and auto-renewals.</string>
+    <string name="island_bills_debit_credit_title">Show Debits &amp; Credits</string>
+    <string name="island_bills_debit_credit_desc">Real-time outward/inward transaction alerts.</string>
+    <string name="island_bills_reminders_title">Show Bill &amp; EMI Reminders</string>
+    <string name="island_bills_reminders_desc">Upcoming invoices, loans, payment links.</string>
+    <string name="island_bills_renewals_title">Show Renewals &amp; Subscriptions</string>
+    <string name="island_bills_renewals_desc">Subscription auto-debits and trial expiration dates.</string>
+    <string name="island_bills_security_title">Show Failures &amp; Security Alerts</string>
+    <string name="island_bills_security_desc">Failed payments, declined transactions, low balance warnings.</string>
+    <string name="island_bills_apps_title">Transaction &amp; Bill Apps</string>
+    <string name="island_bills_apps_explanation">Apps allowed to surface transaction, bill, EMI, refund, and security alerts on the Contextual Island.</string>
+    <string name="island_delivery_apps_explanation">Apps allowed to surface ride, food delivery, and courier tracking on the Contextual Island.</string>
+    <string name="island_meetings_apps_explanation">Apps allowed to surface upcoming meeting and call reminders on the Contextual Island.</string>
+    <string name="reset_to_defaults">Reset to defaults</string>
+
+    <string name="visual_theme_desc">Choose Light, Dark, or System default style.</string>
+    <string name="theme_teal_dark">Teal Dark</string>
+    <string name="theme_mint_light">Mint Light</string>
+    <string name="theme_clay_light">Clay Light</string>
+    <string name="theme_sky_dark">Sky Dark</string>
+
+    <string name="export_backup_desc">Copy your current configuration as a serialized JSON string.</string>
+    <string name="import_backup_desc">Restore settings from a previously exported configuration string.</string>
+    <string name="import_backup_placeholder">Paste exported launcher settings string here&#8230;</string>
+    <string name="toast_backup_copied">Backup copied to clipboard</string>
+    <string name="toast_settings_restored">Settings restored successfully!</string>
+    <string name="toast_restore_failed">Failed to restore settings. Verify string syntax.</string>
+
+    <string name="toast_max_home_apps">Maximally mapped up to 10 apps.</string>
+    <string name="move_up">Move Up</string>
+    <string name="move_down">Move Down</string>
+    <string name="remove">Remove</string>
+    <string name="close">Close</string>
+
+    <!-- Toasts & System Feedback -->
+    <string name="toast_default_launcher_success">Alauncher set as default!</string>
+    <string name="toast_search_default_apps">Search for &#8216;Default Applications&#8217; in Settings</string>
+    <string name="toast_system_settings_error">Could not open system settings</string>
+    <string name="toast_usage_settings_error">Could not open Usage Settings</string>
+    <string name="toast_overlay_settings_error">Could not open Overlay Settings</string>
+    <string name="toast_system_configs_error">Could not launch Android system configurations</string>
+
+    <!-- Alignment & Modes -->
+    <string name="alignment_left">Left</string>
+    <string name="alignment_right">Right</string>
+
+    <!-- Walkthrough & Tour -->
+    <string name="walkthrough_replay_title">Feature Tour &amp; Gestures</string>
+    <string name="walkthrough_replay_desc">Review gestures, the Contextual Island, search, and edge tools.</string>
+    <string name="walkthrough_skip">Skip Tour</string>
+    <string name="walkthrough_next">Next</string>
+    <string name="walkthrough_back">Back</string>
+    <string name="walkthrough_get_started">Get Started</string>
+    <string name="walkthrough_set_default">Set as Default Launcher</string>
+    <string name="walkthrough_step_counter">Step %1$d of %2$d</string>
+
+    <!-- Walkthrough Step: Welcome -->
+    <string name="walkthrough_welcome_badge">MINIMAL HOME</string>
+    <string name="walkthrough_welcome_title">Zero Clutter. Just Focus.</string>
+    <string name="walkthrough_welcome_desc">Pure typography. No addictive feeds or distracting notification dots.</string>
+
+    <!-- Walkthrough Step: Command Palette -->
+    <string name="walkthrough_command_palette_badge">SWIPE UP</string>
+    <string name="walkthrough_command_palette_title">Lightning-Fast App Search</string>
+    <string name="walkthrough_command_palette_desc">Type 1 or 2 letters to find and launch any app with zero lag.</string>
+
+    <!-- Walkthrough Step: Notification Center -->
+    <string name="walkthrough_notification_center_badge">SWIPE RIGHT</string>
+    <string name="walkthrough_notification_center_title">Distraction-Free Notification Center</string>
+    <string name="walkthrough_notification_center_desc">View your notifications calmly in one place. In Settings, &#8220;Filter Notifications to Notification Center&#8221; lets you choose whether everyday notifications stay in your status bar or move to Notification Center.</string>
+
+    <!-- Walkthrough Step: Contextual Island -->
+    <string name="walkthrough_contextual_island_badge">CONTEXTUAL ISLAND</string>
+    <string name="walkthrough_contextual_island_title">Live Info, Right on Time</string>
+    <string name="walkthrough_contextual_island_desc">Actionable pills surface for 1-tap OTP copy, deliveries, and meetings.</string>
+
+    <!-- Walkthrough Step: App Controls -->
+    <string name="walkthrough_app_controls_badge">SWIPE RIGHT ON APPS</string>
+    <string name="walkthrough_app_controls_title">App Shortcuts &amp; Controls</string>
+    <string name="walkthrough_app_controls_desc">Swipe right on any app to access shortcuts, pin to home, hide, or uninstall.</string>
+
+    <!-- Walkthrough Step: Thumb Dock & Limits -->
+    <string name="walkthrough_thumb_dock_badge">FOCUS &amp; PRODUCTIVITY</string>
+    <string name="walkthrough_thumb_dock_title">Focus Mode &amp; Edge Tools</string>
+    <string name="walkthrough_thumb_dock_desc">Silence distractions with timed Focus sessions, plus swipe the screen edge for quick tools—Notes, AI &amp; Clipboard.</string>
+
+    <!-- Walkthrough Step: Get Started -->
+    <string name="walkthrough_get_started_badge">YOU’RE ALL SET</string>
+    <string name="walkthrough_get_started_title">Take Back Your Attention</string>
+    <string name="walkthrough_get_started_desc">Set as default launcher to enjoy a clean, distraction-free home screen.</string>
+
+    <!-- Walkthrough Preview: Gesture cues -->
+    <string name="walkthrough_preview_swipe_up_label">SWIPE UP</string>
+    <string name="walkthrough_preview_swipe_right_label">SWIPE RIGHT</string>
+    <string name="walkthrough_preview_swipe_right_app_label">SWIPE RIGHT ON ANY APP</string>
+
+    <!-- Walkthrough Preview: Command palette search result -->
+    <string name="walkthrough_preview_search_query">cam</string>
+    <string name="walkthrough_preview_search_result_title">Camera</string>
+    <string name="walkthrough_preview_search_result_subtitle">Tap to launch or press Enter</string>
+
+    <!-- Walkthrough Preview: Notification Center -->
+    <string name="walkthrough_preview_center_title">Filtered Notifications</string>
+    <string name="walkthrough_preview_center_bundle_count">3 updates</string>
+    <string name="walkthrough_preview_center_msg_1">• WhatsApp: 2 new messages from Sarah</string>
+    <string name="walkthrough_preview_center_msg_2">• Uber Eats: Order delivered</string>
+
+    <!-- Walkthrough Preview: Contextual Island -->
+    <string name="walkthrough_preview_otp_label">🔑 Uber OTP: 849201</string>
+    <string name="walkthrough_preview_otp_copied_label">✅ OTP 849201 Copied!</string>
+    <string name="walkthrough_preview_otp_action_tap">Tap to Copy</string>
+    <string name="walkthrough_preview_otp_action_copied">Copied</string>
+    <string name="walkthrough_island_enable_permission">Tap to enable Notification Access for live alerts</string>
+    <string name="walkthrough_island_permission_active">Notification Access Active ✓</string>
+
+    <!-- Walkthrough Preview: App quick actions -->
+    <string name="walkthrough_preview_app_controls_menu">Camera • Shortcuts &amp; Menu</string>
+    <string name="walkthrough_preview_app_shortcut_1">📸 Take a Selfie</string>
+    <string name="walkthrough_preview_app_shortcut_2">🎥 Record Video</string>
+    <string name="walkthrough_action_favorite">Favorite</string>
+    <string name="walkthrough_action_hide">Hide</string>
+    <string name="walkthrough_action_app_info">App Info</string>
+
+    <!-- Walkthrough Preview: Focus & Tools -->
+    <string name="walkthrough_preview_focus_title">Focus Mode</string>
+    <string name="walkthrough_preview_focus_active">Active • Distractions Silenced</string>
+    <string name="walkthrough_focus_toggle_hint">Tap to preview Focus Mode</string>
+    <string name="walkthrough_focus_on">ON</string>
+    <string name="walkthrough_focus_off">OFF</string>
+    <string name="walkthrough_edge_tools_hint">One-Handed Edge Tools →</string>
+
+    <!-- Walkthrough Preview: Get started summary -->
+    <string name="walkthrough_preview_summary_title">Quick Gesture Summary:</string>
+    <string name="walkthrough_preview_summary_swipe_up">• Swipe Up / Left: Search all apps</string>
+    <string name="walkthrough_preview_summary_swipe_right">• Swipe Right: Notification Center</string>
+    <string name="walkthrough_preview_summary_swipe_down">• Swipe Down: Status Bar &amp; Notifications</string>
+    <string name="walkthrough_preview_summary_swipe_right_app">• Swipe Right on App: Shortcuts &amp; Controls</string>
+    <string name="walkthrough_preview_summary_double_tap">• Double Tap Home: Lock Screen</string>
+    <string name="walkthrough_preview_summary_long_press">• Long Press Home: Launcher Settings</string>
+
+    <!-- Permission Disclosure Onboarding -->
+    <string name="permission_disclosure_title">Welcome to ALauncher</string>
+    <string name="permission_disclosure_subtitle">Your minimalist, distraction-free home screen.</string>
+    <string name="permission_item_app_library_title">App Library Access</string>
+    <string name="permission_item_app_library_desc">To list and search your installed applications, we query your package list locally. This data never leaves your device.</string>
+    <string name="permission_item_notif_filter_title">Distraction-Free Notification Filter</string>
+    <string name="permission_item_notif_filter_desc">Powers OTP quick-copy and Contextual Island live tracking. You can optionally enable Distraction-Free Notification Filtering in Settings to keep everyday notifications out of your top status bar.</string>
+    <string name="permission_notif_enabled">Notification Access Enabled ✓</string>
+    <string name="permission_enable_notif">Enable Notification Access</string>
+    <string name="permission_go_to_home">Go to Home Screen</string>
+    <string name="permission_restricted_settings_hint">Trouble enabling on Android 13+? Tap for help</string>
+    <string name="permission_restricted_settings_title">Android 13+ Restricted Settings</string>
+    <string name="permission_restricted_settings_desc">If Android disabled the toggle for %1$s, approve it with these quick steps:\n\n1. Open Android Settings > Apps > %1$s.\n2. Tap the ⋮ (three dots) in the top-right corner.\n3. Select &#8216;Allow restricted settings&#8217; and authenticate.\n4. Return here and enable Notification Access.</string>
+    <string name="permission_restricted_settings_open_app_info">Open App Info</string>
+    <string name="permission_restricted_settings_close">Got It</string>
+
+    <!-- Feedback & Feature Suggestions -->
+    <string name="section_feedback">Feedback &amp; Suggestions</string>
+    <string name="feedback_row_title">Send Feedback &amp; Feature Request</string>
+    <string name="feedback_row_desc">Share ideas, report bugs, or request features directly</string>
+    <string name="rate_app_row_title">Rate on Google Play</string>
+    <string name="rate_app_row_desc">Enjoying ALauncher? Leave a review on the Play Store</string>
+    <string name="feedback_dialog_title">Feedback &amp; Suggestions</string>
+    <string name="feedback_category_label">Request Type</string>
+    <string name="feedback_category_feature">💡 Feature Request</string>
+    <string name="feedback_category_bug">🐛 Bug Report</string>
+    <string name="feedback_category_general">💬 Feedback</string>
+    <string name="feedback_message_label">Your Message</string>
+    <string name="feedback_message_placeholder">Describe your feature idea or report what happened…</string>
+    <string name="feedback_min_chars">Min %d characters</string>
+    <string name="feedback_include_diagnostics">Include device diagnostics</string>
+    <string name="feedback_include_diagnostics_desc">App version, Android OS, and device model</string>
+    <string name="feedback_submit">Send via Email</string>
+    <string name="feedback_cancel">Cancel</string>
+    <string name="feedback_copied_to_clipboard">Could not open email app. Copied details and developer email to clipboard.</string>
+
+    <!-- Overlay Shield -->
+    <string name="overlay_shield_title">Overlay Shield</string>
+    <string name="overlay_shield_desc">Manage apps that display floating windows over your screen and bypass distraction filters.</string>
+    <string name="overlay_shield_dialog_title">Floating Overlay Permissions</string>
+    <string name="overlay_shield_dialog_explanation">Apps with overlay access can draw floating popups over your screen. Revoking this permission stops floating popups and routes their alerts quietly to your Notification Center.</string>
+    <string name="overlay_shield_all_button">Open All Overlay Settings</string>
+    <string name="overlay_shield_manage">Revoke in Settings</string>
+    <string name="overlay_shield_no_apps">No apps currently have overlay permissions enabled.</string>
+    <string name="overlay_shield_immediate_app">Immediate App</string>
+    <string name="overlay_shield_filtered_app">Filtered App</string>
+
+    <!-- Double-Tap Screen Lock -->
+    <string name="accessibility_service_label">ALauncher Screen Lock</string>
+    <string name="accessibility_service_desc">Enables double-tap on the home screen to turn off the display while keeping biometric fingerprint and face unlock working.</string>
+    <string name="double_tap_to_lock_dialog_title">Double-Tap to Lock</string>
+    <string name="double_tap_to_lock_dialog_message">ALauncher uses Android’s Accessibility Service API solely to turn off your screen on double-tap while preserving biometric fingerprint and face unlock.\n\nALauncher does not collect, read, store, or share any personal data, keystrokes, or screen content.\n\nWould you like to enable it in system settings?</string>
+    <string name="double_tap_to_lock_active_desc">Active • Preserves fingerprint and face unlock</string>
+    <string name="double_tap_to_lock_inactive_desc">Turn off screen on double-tap • Tap to enable in Settings</string>
+
+    <!-- Notification Filter Section -->
+    <string name="section_notification_filter">Notification Filter</string>
+    <string name="notification_filter_title">Filter Notifications to Notification Center</string>
+    <string name="notification_filter_desc_on">Active: Only apps selected in Immediate Apps are displayed in the status bar; the rest move to Notification Center. Critical OTPs always alert.</string>
+    <string name="notification_filter_desc_off">Disabled: All notifications appear in the status bar as normal. When turned on, only apps selected in Immediate Apps are displayed in the status bar; the rest move to Notification Center.</string>
+    <string name="immediate_apps_title">Immediate Apps</string>
+    <string name="immediate_apps_desc">Choose apps that always display in the status bar (%1$d selected)</string>
+
+    <!-- Dialog Subtitles -->
+    <string name="dnd_permission_dialog_subtitle">Required for automatic silencing during Focus Mode.</string>
+    <string name="double_tap_to_lock_dialog_subtitle">Double tap empty space to quickly lock screen.</string>
+    <string name="permission_restricted_settings_subtitle">Android 13+ Enhanced Security Restriction</string>
+    <string name="focus_mode_duration_dialog_subtitle">Select session duration or silence alerts indefinitely.</string>
+    <string name="feedback_dialog_subtitle">Share your thoughts, suggestions, or report issues.</string>
+    <string name="app_time_limits_dialog_subtitle">Set daily usage limits to reduce distraction.</string>
+    <string name="immediate_notifications_dialog_subtitle">Apps that bypass notification filters and always alert immediately.</string>
+    <string name="backup_dialog_subtitle">Copy this configuration code to save or transfer your setup.</string>
+    <string name="restore_dialog_subtitle">Paste your exported configuration snippet below to restore.</string>
+    <string name="close_button">Close</string>
+    <string name="clear_all_count">Clear All (%d)</string>
+    <string name="clear_all_notifications">Clear all notifications</string>
+    <string name="clear_search">Clear search</string>
+    <string name="search_desc">Search</string>
+    <string name="collapse_desc">Collapse</string>
+    <string name="expand_stack_desc">Expand stack</string>
+    <string name="dismiss_alert_desc">Dismiss alert</string>
+    <string name="shortcuts_header">SHORTCUTS</string>
+</resources>
