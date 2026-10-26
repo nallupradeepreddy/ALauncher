@@ -559,6 +559,15 @@ tasks.register<QualitySummaryTask>("qualitySummary") {
 
 tasks.withType<Test>().configureEach {
   maxHeapSize = "2048m"
+
+  testLogging {
+    events("passed", "skipped", "failed")
+    exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    showStandardStreams = false
+  }
+
+  systemProperty("java.awt.headless", "true")
+
   if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
     jvmArgs(
       "--enable-native-access=ALL-UNNAMED",

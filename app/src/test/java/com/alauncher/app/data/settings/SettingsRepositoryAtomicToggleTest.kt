@@ -1,12 +1,14 @@
 package com.alauncher.app.data.settings
 
 import android.content.Context
+import androidx.datastore.preferences.core.edit
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -26,10 +28,24 @@ class SettingsRepositoryAtomicToggleTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext<Context>()
+        runBlocking {
+            context.dataStore.edit { it.clear() }
+            val bootstrapPrefs = context.getSharedPreferences("alauncher_bootstrap", Context.MODE_PRIVATE)
+            bootstrapPrefs.edit().clear().commit()
+        }
         repo = SettingsRepository(context)
     }
 
-    @Test
+    @After
+    fun tearDown() {
+        runBlocking {
+            context.dataStore.edit { it.clear() }
+            val bootstrapPrefs = context.getSharedPreferences("alauncher_bootstrap", Context.MODE_PRIVATE)
+            bootstrapPrefs.edit().clear().commit()
+        }
+    }
+
+    @Test(timeout = 10_000)
     fun toggleUnfilteredApp_addsAndRemoves() = runBlocking {
         val pkg = "com.example.unfiltered"
 
@@ -46,7 +62,7 @@ class SettingsRepositoryAtomicToggleTest {
         assertFalse(repo.settingsFlow.first().unfilteredApps.contains(pkg))
     }
 
-    @Test
+    @Test(timeout = 10_000)
     fun toggleTransactionAllowedApp_addsAndRemoves() = runBlocking {
         val pkg = "com.example.bank"
 
@@ -60,7 +76,7 @@ class SettingsRepositoryAtomicToggleTest {
         assertFalse(repo.settingsFlow.first().transactionAllowedApps.contains(pkg))
     }
 
-    @Test
+    @Test(timeout = 10_000)
     fun toggleDeliveryAllowedApp_addsAndRemoves() = runBlocking {
         val pkg = "com.example.delivery"
 
@@ -71,7 +87,7 @@ class SettingsRepositoryAtomicToggleTest {
         assertFalse(repo.settingsFlow.first().deliveryAllowedApps.contains(pkg))
     }
 
-    @Test
+    @Test(timeout = 10_000)
     fun toggleMeetingAllowedApp_addsAndRemoves() = runBlocking {
         val pkg = "com.example.meeting"
 
@@ -82,7 +98,7 @@ class SettingsRepositoryAtomicToggleTest {
         assertFalse(repo.settingsFlow.first().meetingAllowedApps.contains(pkg))
     }
 
-    @Test
+    @Test(timeout = 10_000)
     fun concurrentToggles_noLostUpdates() = runBlocking {
         // Clear unfiltered apps first
         repo.setUnfilteredApps(emptySet())
@@ -106,7 +122,7 @@ class SettingsRepositoryAtomicToggleTest {
         }
     }
 
-    @Test
+    @Test(timeout = 10_000)
     fun concurrentNotificationFilteringToggles_maintainSynchronizedConsistencyBetweenBootstrapAndDataStore() = runBlocking {
         // Concurrently invoke setNotificationFilteringEnabled with alternating booleans across multiple coroutines
         val iterations = 30
@@ -128,4 +144,3 @@ class SettingsRepositoryAtomicToggleTest {
         assertEquals("DataStore and Initial State Cache must be strictly consistent", flowValue, initialCacheValue)
     }
 }
-

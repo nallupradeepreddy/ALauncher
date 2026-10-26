@@ -273,53 +273,59 @@ class ExampleRobolectricTest {
 
   @Test
   fun testImportHomeAppsOrderAsJsonArray() = kotlinx.coroutines.runBlocking<Unit> {
-    val context = ApplicationProvider.getApplicationContext<Context>()
-    val repo = com.alauncher.app.data.settings.SettingsRepository(context)
+    kotlinx.coroutines.withTimeout(5_000) {
+      val context = ApplicationProvider.getApplicationContext<Context>()
+      val repo = com.alauncher.app.data.settings.SettingsRepository(context)
 
-    val rawJson = """
-      {
-        "home_apps_order": ["com.app.x", "com.app.y", "com.app.z"]
-      }
-    """.trimIndent()
+      val rawJson = """
+        {
+          "home_apps_order": ["com.app.x", "com.app.y", "com.app.z"]
+        }
+      """.trimIndent()
 
-    val success = repo.importSettingsFromJson(rawJson)
-    assertTrue(success)
+      val success = repo.importSettingsFromJson(rawJson)
+      assertTrue(success)
 
-    val state = repo.settingsFlow.first()
-    assertEquals(listOf("com.app.x", "com.app.y", "com.app.z"), state.homeApps)
-    assertEquals(true, state.homeAppsConfigured)
+      val state = repo.settingsFlow.first()
+      assertEquals(listOf("com.app.x", "com.app.y", "com.app.z"), state.homeApps)
+      assertEquals(true, state.homeAppsConfigured)
+    }
   }
 
   @Test
   fun testImportSettingsMalformedJson() = kotlinx.coroutines.runBlocking<Unit> {
-    val context = ApplicationProvider.getApplicationContext<Context>()
-    val repo = com.alauncher.app.data.settings.SettingsRepository(context)
+    kotlinx.coroutines.withTimeout(5_000) {
+      val context = ApplicationProvider.getApplicationContext<Context>()
+      val repo = com.alauncher.app.data.settings.SettingsRepository(context)
 
-    val malformed = "{ this is not valid json }"
-    val success = repo.importSettingsFromJson(malformed)
-    assertEquals(false, success)
+      val malformed = "{ this is not valid json }"
+      val success = repo.importSettingsFromJson(malformed)
+      assertEquals(false, success)
+    }
   }
 
   @Test
   fun testImportSettingsUnknownKeyFallback() = kotlinx.coroutines.runBlocking<Unit> {
-    val context = ApplicationProvider.getApplicationContext<Context>()
-    val repo = com.alauncher.app.data.settings.SettingsRepository(context)
+    kotlinx.coroutines.withTimeout(5_000) {
+      val context = ApplicationProvider.getApplicationContext<Context>()
+      val repo = com.alauncher.app.data.settings.SettingsRepository(context)
 
-    val jsonWithUnknownKeys = """
-      {
-        "unknown_bool": true,
-        "unknown_int": 42,
-        "unknown_string": "test_value"
-      }
-    """.trimIndent()
+      val jsonWithUnknownKeys = """
+        {
+          "unknown_bool": true,
+          "unknown_int": 42,
+          "unknown_string": "test_value"
+        }
+      """.trimIndent()
 
-    val success = repo.importSettingsFromJson(jsonWithUnknownKeys)
-    assertTrue(success)
+      val success = repo.importSettingsFromJson(jsonWithUnknownKeys)
+      assertTrue(success)
 
-    val prefs = context.dataStore.data.first()
-    assertEquals(true, prefs[booleanPreferencesKey("unknown_bool")])
-    assertEquals(42, prefs[androidx.datastore.preferences.core.intPreferencesKey("unknown_int")])
-    assertEquals("test_value", prefs[stringPreferencesKey("unknown_string")])
+      val prefs = context.dataStore.data.first()
+      assertEquals(true, prefs[booleanPreferencesKey("unknown_bool")])
+      assertEquals(42, prefs[androidx.datastore.preferences.core.intPreferencesKey("unknown_int")])
+      assertEquals("test_value", prefs[stringPreferencesKey("unknown_string")])
+    }
   }
 }
 
