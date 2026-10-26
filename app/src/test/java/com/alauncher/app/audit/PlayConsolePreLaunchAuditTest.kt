@@ -267,27 +267,31 @@ class PlayConsolePreLaunchAuditTest {
             assertEquals("Root tag of accessibility config must be accessibility-service", "accessibility-service", root.tagName)
             assertTrue("Config must declare android:description", root.hasAttribute("android:description"))
 
-            // Verify Play Store listing disclosure in README.md
-            val readmeFile = listOf(
+            // Verify Play Store listing disclosure in fastlane metadata or README.md
+            val storeDescriptionFile = listOf(
+                File("fastlane/metadata/android/en-US/full_description.txt"),
+                File("../fastlane/metadata/android/en-US/full_description.txt"),
+                manifestFile.parentFile?.parentFile?.parentFile?.resolve("fastlane/metadata/android/en-US/full_description.txt"),
                 File("README.md"),
                 File("../README.md"),
                 manifestFile.parentFile?.parentFile?.parentFile?.resolve("README.md")
             ).filterNotNull().firstOrNull { it.exists() }
 
-            assertNotNull("README.md must exist to audit Play Store description", readmeFile)
-            val readmeContent = readmeFile!!.readText()
+            assertNotNull("Play Store description file must exist in fastlane/metadata/android/en-US/full_description.txt or README.md", storeDescriptionFile)
+            val storeDescriptionContent = storeDescriptionFile!!.readText()
             assertTrue(
-                "Play Store description in README.md must contain 'ACCESSIBILITY SERVICE API USAGE' section",
-                readmeContent.contains("ACCESSIBILITY SERVICE API USAGE")
+                "Play Store description must contain Accessibility Service usage disclosure",
+                storeDescriptionContent.contains("ACCESSIBILITY SERVICE USAGE") ||
+                    storeDescriptionContent.contains("ACCESSIBILITY SERVICE API USAGE")
             )
             assertTrue(
                 "Play Store description must explain the purpose (screen lock / double tap)",
-                readmeContent.contains("GLOBAL_ACTION_LOCK_SCREEN") || readmeContent.contains("Double-Tap to Lock")
+                storeDescriptionContent.contains("GLOBAL_ACTION_LOCK_SCREEN") || storeDescriptionContent.contains("Double-Tap to Lock")
             )
             assertTrue(
                 "Play Store description must explicitly guarantee zero data collection",
-                readmeContent.contains("ALauncher does NOT collect, read, store, or transmit any personal data") ||
-                    readmeContent.contains("does NOT collect")
+                storeDescriptionContent.contains("ALauncher does NOT collect, read, store, or transmit any personal data") ||
+                    storeDescriptionContent.contains("does NOT collect")
             )
 
             // Verify strings.xml prominent in-app disclosure
