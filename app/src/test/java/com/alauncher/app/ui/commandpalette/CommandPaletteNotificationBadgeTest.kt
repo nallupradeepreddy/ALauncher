@@ -1,6 +1,7 @@
 package com.alauncher.app.ui.commandpalette
 
 import android.content.Context
+import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import com.alauncher.app.data.app.AppRepository
 import com.alauncher.app.data.database.AppMetadataDao
@@ -13,6 +14,7 @@ import com.alauncher.app.model.LauncherApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -118,19 +120,23 @@ class CommandPaletteNotificationBadgeTest {
             settingsRepository = settingsRepository,
             notificationRepository = notifRepo
         )
-        val enrichedField = CommandPaletteViewModel::class.java.getDeclaredField("enrichedAppsFlow")
-        enrichedField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val enrichedFlow = enrichedField.get(vm) as kotlinx.coroutines.flow.StateFlow<List<LauncherApp>>
+        try {
+            val enrichedField = CommandPaletteViewModel::class.java.getDeclaredField("enrichedAppsFlow")
+            enrichedField.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            val enrichedFlow = enrichedField.get(vm) as kotlinx.coroutines.flow.StateFlow<List<LauncherApp>>
 
-        // The enrichedAppsFlow should have the badge count set to 1
-        val enrichedApps = enrichedFlow.first { it.isNotEmpty() }
-        val app = enrichedApps.first { it.packageName == "com.test.messenger" }
-        assertEquals(
-            "NORMAL notification should contribute to badge count",
-            1,
-            app.notificationCount
-        )
+            // The enrichedAppsFlow should have the badge count set to 1
+            val enrichedApps = enrichedFlow.first { it.isNotEmpty() }
+            val app = enrichedApps.first { it.packageName == "com.test.messenger" }
+            assertEquals(
+                "NORMAL notification should contribute to badge count",
+                1,
+                app.notificationCount
+            )
+        } finally {
+            vm.viewModelScope.cancel()
+        }
     }
 
     /**
@@ -184,18 +190,22 @@ class CommandPaletteNotificationBadgeTest {
             settingsRepository = settingsRepository,
             notificationRepository = mutedNotifRepo
         )
-        val enrichedField = CommandPaletteViewModel::class.java.getDeclaredField("enrichedAppsFlow")
-        enrichedField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val enrichedFlow = enrichedField.get(vm) as kotlinx.coroutines.flow.StateFlow<List<LauncherApp>>
+        try {
+            val enrichedField = CommandPaletteViewModel::class.java.getDeclaredField("enrichedAppsFlow")
+            enrichedField.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            val enrichedFlow = enrichedField.get(vm) as kotlinx.coroutines.flow.StateFlow<List<LauncherApp>>
 
-        val enrichedApps = enrichedFlow.first { it.isNotEmpty() }
-        val app = enrichedApps.first { it.packageName == "com.test.social" }
-        assertEquals(
-            "MUTED notifications must NOT contribute to badge count",
-            0,
-            app.notificationCount
-        )
+            val enrichedApps = enrichedFlow.first { it.isNotEmpty() }
+            val app = enrichedApps.first { it.packageName == "com.test.social" }
+            assertEquals(
+                "MUTED notifications must NOT contribute to badge count",
+                0,
+                app.notificationCount
+            )
+        } finally {
+            vm.viewModelScope.cancel()
+        }
     }
 
     /**
@@ -241,31 +251,34 @@ class CommandPaletteNotificationBadgeTest {
             settingsRepository = settingsRepository,
             notificationRepository = notifRepo
         )
+        try {
+            val enrichedField = CommandPaletteViewModel::class.java.getDeclaredField("enrichedAppsFlow").apply { isAccessible = true }
+            @Suppress("UNCHECKED_CAST")
+            val enrichedFlow = enrichedField.get(vm) as kotlinx.coroutines.flow.StateFlow<List<LauncherApp>>
+            val enrichedApps = enrichedFlow.first { it.isNotEmpty() }
 
-        val enrichedField = CommandPaletteViewModel::class.java.getDeclaredField("enrichedAppsFlow").apply { isAccessible = true }
-        @Suppress("UNCHECKED_CAST")
-        val enrichedFlow = enrichedField.get(vm) as kotlinx.coroutines.flow.StateFlow<List<LauncherApp>>
-        val enrichedApps = enrichedFlow.first { it.isNotEmpty() }
+            val searchIndexField = CommandPaletteViewModel::class.java.getDeclaredField("searchIndex").apply { isAccessible = true }
+            val searchIndex = searchIndexField.get(vm) as com.alauncher.app.domain.app.AppTrieSearchIndex
 
-        val searchIndexField = CommandPaletteViewModel::class.java.getDeclaredField("searchIndex").apply { isAccessible = true }
-        val searchIndex = searchIndexField.get(vm) as com.alauncher.app.domain.app.AppTrieSearchIndex
+            // The search index is built from rawApps (where notificationCount is 0)
+            searchIndex.rebuildIndex(listOf(rawApp))
 
-        // The search index is built from rawApps (where notificationCount is 0)
-        searchIndex.rebuildIndex(listOf(rawApp))
+            // searchIndex.search returns the raw app from the trie with notificationCount == 0
+            val searchResults = searchIndex.search("mess", enrichedApps)
+            assertEquals(0, searchResults.first().notificationCount)
 
-        // searchIndex.search returns the raw app from the trie with notificationCount == 0
-        val searchResults = searchIndex.search("mess", enrichedApps)
-        assertEquals(0, searchResults.first().notificationCount)
+            // Production remapping in CommandPaletteViewModel maps search results back through enrichedMap
+            val enrichedMap = enrichedApps.associateBy { it.packageName }
+            val remappedResults = searchResults.map { app -> enrichedMap[app.packageName] ?: app }
 
-        // Production remapping in CommandPaletteViewModel maps search results back through enrichedMap
-        val enrichedMap = enrichedApps.associateBy { it.packageName }
-        val remappedResults = searchResults.map { app -> enrichedMap[app.packageName] ?: app }
-
-        // The remapped app retains the live badge count from enrichedApps
-        assertEquals(
-            "Remapped search results must retain live notification badge count",
-            1,
-            remappedResults.first().notificationCount
-        )
+            // The remapped app retains the live badge count from enrichedApps
+            assertEquals(
+                "Remapped search results must retain live notification badge count",
+                1,
+                remappedResults.first().notificationCount
+            )
+        } finally {
+            vm.viewModelScope.cancel()
+        }
     }
 }
