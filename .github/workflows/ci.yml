@@ -35,20 +35,28 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
+      - name: Cache Robolectric SDK Jars
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          path: ~/.cache/robolectric
+          key: ${{ runner.os }}-robolectric-${{ hashFiles('**/libs.versions.toml', '**/build.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-robolectric-
+
       - name: Grant Execute Permission to Gradle Wrapper
         run: chmod +x gradlew
 
       - name: Run Unit Tests & Coverage
-        run: ./gradlew testDebugUnitTest jacocoTestReport --stacktrace
+        run: ./gradlew testDebugUnitTest jacocoTestReport --max-workers=2 --stacktrace
 
       - name: Verify Code Coverage Thresholds
-        run: ./gradlew jacocoTestCoverageVerification verifyChangedCodeCoverage qualitySummary --stacktrace
+        run: ./gradlew jacocoTestCoverageVerification verifyChangedCodeCoverage qualitySummary --max-workers=2 --stacktrace
 
       - name: Run Android Lint
-        run: ./gradlew lintDebug --stacktrace
+        run: ./gradlew lintDebug --max-workers=2 --stacktrace
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --max-workers=2 --stacktrace
 
       - name: Upload Test Reports (on failure)
         if: failure()
