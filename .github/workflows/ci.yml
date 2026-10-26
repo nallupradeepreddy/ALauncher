@@ -16,7 +16,7 @@ jobs:
   verify:
     name: Lint, Test & Build Debug
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Code
@@ -59,7 +59,7 @@ jobs:
         run: ./gradlew assembleDebug --max-workers=2 --stacktrace
 
       - name: Upload Test Reports (on failure)
-        if: failure()
+        if: failure() || cancelled()
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: test-and-lint-reports

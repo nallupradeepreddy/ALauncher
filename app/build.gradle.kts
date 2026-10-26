@@ -559,7 +559,6 @@ tasks.register<QualitySummaryTask>("qualitySummary") {
 
 tasks.withType<Test>().configureEach {
   maxHeapSize = "2048m"
-  forkEvery = 100
 
   testLogging {
     events("passed", "skipped", "failed")
