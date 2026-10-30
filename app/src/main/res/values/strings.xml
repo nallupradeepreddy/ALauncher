@@ -286,8 +286,8 @@
     <string name="section_feedback">Feedback &amp; Suggestions</string>
     <string name="feedback_row_title">Send Feedback &amp; Feature Request</string>
     <string name="feedback_row_desc">Share ideas, report bugs, or request features directly</string>
-    <string name="rate_app_row_title">Rate on Google Play</string>
-    <string name="rate_app_row_desc">Enjoying ALauncher? Leave a review on the Play Store</string>
+    <string name="rate_app_row_title">Rate ALauncher</string>
+    <string name="rate_app_row_desc">Enjoying ALauncher? Leave a review on your app store</string>
     <string name="feedback_dialog_title">Feedback &amp; Suggestions</string>
     <string name="feedback_category_label">Request Type</string>
     <string name="feedback_category_feature">💡 Feature Request</string>

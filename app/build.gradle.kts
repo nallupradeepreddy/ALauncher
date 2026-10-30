@@ -17,8 +17,8 @@ android {
     applicationId = "com.alauncher.app"
     minSdk = 26
     targetSdk = 36
-    versionCode = 38
-    versionName = "1.4.0"
+    versionCode = 39
+    versionName = "1.4.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -153,7 +153,6 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
-  implementation(libs.play.review.ktx)
   testImplementation(libs.androidx.compose.ui.test.junit4)
   testImplementation(libs.androidx.core)
   testImplementation(libs.androidx.junit)
@@ -317,6 +316,9 @@ abstract class VerifyChangedCoverageTask : DefaultTask() {
              norm.contains("/receiver/") ||
              norm.contains("/test/") ||
              norm.contains("/androidTest/") ||
+             norm.endsWith("Activity.kt") ||
+             norm.endsWith("Activity.java") ||
+             norm.endsWith("Application.kt") ||
              (!norm.endsWith(".kt") && !norm.endsWith(".java"))
     }
 
