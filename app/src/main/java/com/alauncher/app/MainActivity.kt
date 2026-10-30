@@ -7,29 +7,17 @@ import android.widget.Toast
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.Uri
-import com.alauncher.app.ui.home.ContextualActionType
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
@@ -39,27 +27,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DoNotDisturbOn
 import androidx.compose.ui.res.stringResource
-import com.alauncher.app.R
 import com.alauncher.app.ui.components.AppDialogHeader
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alauncher.app.model.ThemeMode
-import com.alauncher.app.model.HomeAlignment
 import com.alauncher.app.receiver.PackageChangeReceiver
-import com.alauncher.app.ui.commandpalette.CommandPaletteScreen
 import com.alauncher.app.ui.commandpalette.CommandPaletteViewModel
-import com.alauncher.app.ui.home.LauncherHomeScreen
 import com.alauncher.app.ui.home.HomeViewModel
-import com.alauncher.app.ui.notificationcenter.NotificationCenterScreen
 import com.alauncher.app.ui.notificationcenter.NotificationCenterViewModel
-import com.alauncher.app.ui.settings.SettingsScreen
 import com.alauncher.app.ui.main.LauncherAppScaffold
 import com.alauncher.app.ui.settings.SettingsViewModel
 import com.alauncher.app.ui.theme.MinimalSmartLauncherTheme
 import com.alauncher.app.ui.theme.isLight
 import com.alauncher.app.data.settings.isFocusModeActiveNow
-import com.alauncher.app.ui.utils.InAppReviewHelper
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import androidx.core.view.WindowCompat
@@ -121,13 +99,12 @@ class MainActivity : ComponentActivity() {
     private val isLaunchingState = mutableStateOf(false)
     private var activeScreen by mutableStateOf(ActiveScreen.Home)
     private var isRequestingDefaultLauncher = false
-    private var reviewJob: Job? = null
 
     override fun onResume() {
         super.onResume()
         isLaunchingState.value = false
         NotificationListener.requestRebindIfDisconnected(this)
-        val isDefault = com.alauncher.app.ui.utils.LauncherUtils.isDefaultLauncher(this)
+        val isDefault = LauncherUtils.isDefaultLauncher(this)
         val hasOverlay = android.provider.Settings.canDrawOverlays(this)
         lifecycleScope.launch {
             val settings = app.settingsRepository.settingsFlow.first()
@@ -159,25 +136,9 @@ class MainActivity : ComponentActivity() {
                 } catch (e: Exception) {}
             }
         }
-        reviewJob?.cancel()
-        if (activeScreen == ActiveScreen.Home && !isRequestingDefaultLauncher && isDefault) {
-            reviewJob = lifecycleScope.launch {
-                delay(1500)
-                if (activeScreen == ActiveScreen.Home && !isLaunchingState.value && lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                    val latestSettings = app.settingsRepository.settingsFlow.first()
-                    InAppReviewHelper.maybeLaunchInAppReview(
-                        activity = this@MainActivity,
-                        hasCompletedWalkthrough = latestSettings.hasCompletedWalkthrough,
-                        isFocusModeActive = latestSettings.isFocusModeActiveNow()
-                    )
-                }
-            }
-        }
     }
 
     override fun onPause() {
-        reviewJob?.cancel()
-        reviewJob = null
         super.onPause()
         if (activeScreen == ActiveScreen.CommandPalette) {
             activeScreen = ActiveScreen.Home
@@ -382,7 +343,7 @@ class MainActivity : ComponentActivity() {
                     AlertDialog(
                         onDismissRequest = { showDndPermissionDialog = false },
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(28.dp),
-                        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        containerColor = MaterialTheme.colorScheme.surface,
                         tonalElevation = 6.dp,
                         title = {
                             AppDialogHeader(
@@ -396,7 +357,7 @@ class MainActivity : ComponentActivity() {
                                 text = "To automatically silence system alerts and calls during Focus Mode, ALauncher requires Do Not Disturb permission. Would you like to enable it in system settings?",
                                 fontSize = 13.sp,
                                 lineHeight = 18.sp,
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
                         confirmButton = {
@@ -466,12 +427,14 @@ class MainActivity : ComponentActivity() {
                     onLaunchApp = { packageName ->
                         if (!isLaunchingState.value) {
                             isLaunchingState.value = true
-                            lifecycleScope.launch {
+                            val debounceJob = lifecycleScope.launch {
                                 delay(1000)
                                 isLaunchingState.value = false
                             }
-                            if (LauncherUtils.launchAppPackage(this@MainActivity, packageName)) {
-                                InAppReviewHelper.recordAppLaunch(this@MainActivity)
+                            val launched = LauncherUtils.launchAppPackage(this@MainActivity, packageName)
+                            if (!launched) {
+                                debounceJob.cancel()
+                                isLaunchingState.value = false
                             }
                         }
                     },

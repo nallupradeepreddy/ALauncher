@@ -1692,10 +1692,10 @@ fun SettingsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                InAppReviewHelper.openPlayStoreListing(context)
+                                InAppReviewHelper.openStoreListing(context)
                             }
                             .padding(horizontal = 16.dp, vertical = 14.dp)
-                            .testTag("rate_on_play_store_row"),
+                            .testTag("rate_app_row"),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
