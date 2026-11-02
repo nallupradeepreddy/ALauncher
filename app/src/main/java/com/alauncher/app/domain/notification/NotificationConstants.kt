@@ -163,6 +163,15 @@ object NotificationConstants {
         """(?:uber|ola|zomato|swiggy|blinkit|grofers|dunzo|bigbasket|zepto|tataneu|tata\.neu|countrydelight|doordash|grubhub|amzn\.mshop|mshop\.android|shop\.android\.shopping|flipkart|myntra|meesho|fedex|dhl|ups|bluedart|delhivery|rapido|lyft|grab|instashop|instacart|indiapost|dotzot|dtdc|spoton|gati|safexpress)""",
         RegexOption.IGNORE_CASE
     )
+
+    /**
+     * E-commerce and retail shopping packages. Used to identify sale countdown timers
+     * without false-flagging ride-hailing or food delivery ETA countdowns.
+     */
+    val SHOPPING_PKG_REGEX = Regex(
+        """(?:myntra|flipkart|meesho|nykaa|purplle|ajio|tata\.neu|tataneu|pepperfry|amzn\.mshop|mshop\.android|shop\.android\.shopping)""",
+        RegexOption.IGNORE_CASE
+    )
     
     // "arriving" alone removed — matches flight/train notifications handled by travel section.
     // "arrived" alone removed — same reason.
@@ -180,7 +189,7 @@ object NotificationConstants {
 
     // --- Promotional Patterns ---
     val PROMO_KEYWORD_REGEX = Regex(
-        """\b(?:discount|coupon|cashback\s+offer|sale\s+(?:on|ends|starts)|deals?|win\s+(?:up\s+to|a|prizes)|voucher|promo(?:tion)?|membership\s+offer|flash\s+(?:hour|sale|deals?)|crack\s+code|secret\s+code|deal\s+code|coupon\s+code|promo\s+code|voucher\s+code|special\s+code|discount\s+code|instant\s+withdrawals?|ipo\s+alert|new\s+ipo|gift\s+nifty|(?:mega|huge|massive)\s+price\s+drop(?:ped)?|restock\s+(?:now|your|daily)|back\s+in\s+stock)\b""",
+        """\b(?:discount|coupon|cashback\s+offer|sale\s+(?:on|ends|starts)|deals?|win\s+(?:up\s+to|a|prizes)|voucher|promo(?:tion)?|membership\s+offer|flash\s+(?:hour|sale|deals?)|crack\s+code|secret\s+code|deal\s+code|coupon\s+code|promo\s+code|voucher\s+code|special\s+code|discount\s+code|instant\s+withdrawals?|ipo\s+alert|new\s+ipo|gift\s+nifty|(?:mega|huge|massive)\s+price\s+drop(?:ped)?|restock\s+(?:now|your|daily)|back\s+in\s+stock|(?:countdown|timer|clock)\s+(?:is\s+)?ticking|ends?\s+(?:in|soon|today|tonight)|hurry\s+up)\b""",
         RegexOption.IGNORE_CASE
     )
 
@@ -196,9 +205,14 @@ object NotificationConstants {
         """\bends\s+at\s+\d+\b|""" +
         """\bjust\s+(?:Rs\.?|INR|₹)\s*\d+\b|""" +
         """\bat\s+just\s*(?:Rs\.?|INR|₹)?\s*\d+\b|""" +
-        """\b(?:Rs\.?|INR|₹)\s*\d+\s*(?:deals?|loot|offer|store)\b|""" +
+        """\b(?:at|for)\s+just\s*(?:Rs\.?|INR|₹|[\$€£])?\s*\d+(?:\/-)?\b|""" +
+        """\b(?:Rs\.?|INR|₹)\s*\d+\s*(?:coin|deals?|loot|offer|store|sellers?|items?|products?|drop)\b|""" +
+        """\bworth\s+(?:Rs\.?|INR|₹|[\$€£])?\s*\d+\b|""" +
+        """\b(?:top|best)\s*sellers?\b|""" +
+        """\bglass\s+skin\b|""" +
         """\b(?:shagun|glow[-\s]?up)\b|""" +
-        """\b(?:beauty|fashion|mega|grand|clearance|festive|diwali|holi|new\s+year|monsoon|summer|winter)\s+sale\b|""" +
+        """\b(?:beauty|fashion|mega|grand|clearance|festive|diwali|holi|new\s+year|monsoon|summer|winter)\s+(?:sale|deals?|offers?|fest|discounts?)\b|""" +
+        """\b\d+\s*(?:hrs?|hours?|mins?|minutes?)\s+(?:of\s+)?(?:festive\s+)?(?:deals?|offers?|sales?|discounts?)\b|""" +
         """\bgrab\s+(?:your\s+)?(?:faves?|favorites?|deals?)\b|""" +
         """\bsteal\s+the\s+deals?\b|""" +
         """\bgrab\s+(?:[a-z0-9]+\s+){0,3}at\s+just\s+(?:Rs\.?|INR|₹)?\s*\d+\b|""" +
@@ -208,7 +222,8 @@ object NotificationConstants {
         """\b(?:double|triple)\s+the\s+(?:fun|deal|shopping|cashback)\b|""" +
         """\beverything\s+you\s+(?:need|want)\b|""" +
         """\buse\s+code\s+(?![0-9]{4,8}\b)[a-zA-Z0-9_-]+\b|""" +
-        """\b(?:get|flat|save|upto)\s+(?:Rs\.?|INR|₹)?\s*\d+\s*(?:%|off|cashback)\b|""" +
+        """\b(?:get|flat|save|up\s?to|min\.?|minimum|at\s+least)\s+(?:Rs\.?|INR|₹|[\$€£])\s*\d+(?:\.\d+)?\s*(?:off|cashback)\b|""" +
+        """\b(?:(?:get|flat|save|up\s?to|min\.?|minimum|at\s+least)\s+)?\d+(?:\.\d+)?\s*%\s*off\b|""" +
         """\bfree\s+(?:gift|delivery|shipping|coupon)\b|""" +
         """\blimited\s+time\b|""" +
         """\bprime\s+offer\b|""" +

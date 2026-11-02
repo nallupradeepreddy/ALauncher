@@ -320,14 +320,14 @@ class NotificationClassifier(private val parser: NotificationParser = Notificati
         if (s.hasDeliveryKeyword) score += 2
         if (s.hasDeliveryProgress) score += 2
         if (s.hasCourierTracking) {
-            if (s.hasDeliveryKeyword || s.hasDeliveryProgress || s.isOngoing || s.osCategory == Notification.CATEGORY_TRANSPORT) {
+            if (s.hasDeliveryKeyword || s.hasDeliveryProgress || s.osCategory == Notification.CATEGORY_TRANSPORT) {
                 score += 3
             } else {
                 score += 1
             }
         }
-        // Ongoing notification from a known courier is a very strong live-tracking signal.
-        if (s.isOngoing && s.hasCourierTracking) score += 2
+        // Ongoing notification from a known courier is only a live-tracking signal if delivery progress or keyword exists
+        if (s.isOngoing && s.hasCourierTracking && (s.hasDeliveryKeyword || s.hasDeliveryProgress)) score += 2
         // Penalise when there is NO delivery-specific keyword or progress signal:
         if (s.hasAmount && s.hasTransactionKeyword && !s.hasDeliveryKeyword && !s.hasDeliveryProgress) score -= 3
         return score.coerceAtLeast(0)

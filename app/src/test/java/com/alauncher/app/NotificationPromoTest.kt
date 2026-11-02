@@ -310,4 +310,279 @@ class NotificationPromoTest {
         )
         assertTrue("shouldCancelNotification must be true", shouldCancel)
     }
+
+    @Test
+    fun testUserReportedPurplleAndMyntraNotifications() {
+        val parser = NotificationParser()
+        val classifier = NotificationClassifier(parser)
+        val filterEngine = NotificationFilterEngine(parser, classifier)
+        val settings = com.alauncher.app.data.settings.SettingsState(
+            notificationFilteringEnabled = true
+        )
+
+        // Issue 1: Purplle
+        val purplleTitle = "A ₹1 coin just bought you glass skin."
+        val purplleText = "Get the Good Vibes Rice Toner (worth ₹249) & more top sellers for just Rs. 1/- today! ✨"
+
+        val purplleNotif = LauncherNotification(
+            key = "purplle_leak",
+            packageName = "com.manash.purplle",
+            appName = "Purplle",
+            title = purplleTitle,
+            text = purplleText,
+            postTime = System.currentTimeMillis(),
+            channelId = "deals",
+            isOngoing = false,
+            isClearable = true,
+            importance = 3
+        )
+
+        val purplleEnriched = filterEngine.enrichWithMemoizedSignals(purplleNotif)
+        assertTrue("Purplle memoizedIsPromo must be true", purplleEnriched.memoizedIsPromo == true)
+        assertFalse("Purplle memoizedIsOtp must be false", purplleEnriched.memoizedIsOtp == true)
+        val purplleClassified = classifier.classify(purplleNotif, settings)
+        assertEquals("Purplle classified intent must be NONE", NotificationIntent.NONE, purplleClassified.intent)
+        val purplleCat = filterEngine.classify(purplleNotif, settings)
+        assertEquals("Purplle filterCategory must be NORMAL", FilterCategory.NORMAL, purplleCat)
+
+        // Fast-path and slow-path cancellation must cancel Purplle even if sticky/no-clear
+        val purplleFastCancel = com.alauncher.app.service.NotificationListener.isFastPathCancelCandidate(
+            packageName = purplleNotif.packageName,
+            title = purplleNotif.title,
+            text = purplleNotif.text,
+            category = null,
+            isClearable = false, // Even if sticky push notification
+            isOngoing = false,
+            unfilteredApps = emptySet(),
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true
+        )
+        assertTrue("Purplle must be fast-path cancelled even if sticky", purplleFastCancel)
+
+        val purplleShouldCancel = com.alauncher.app.service.NotificationListener.shouldCancelNotification(
+            cat = purplleCat,
+            isClearable = false,
+            isOngoing = false,
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true,
+            isPromo = true
+        )
+        assertTrue("Purplle shouldCancelNotification must be true", purplleShouldCancel)
+
+        // Issue 2: Myntra with countdown timer
+        val myntraTitle = "Up To ₹300 Off | Use C..."
+        val myntraText = "📢 4 HRS of festive deals 💰 Min. 60% Off | French Conne..."
+
+        val myntraNotif = LauncherNotification(
+            key = "myntra_leak",
+            packageName = "com.myntra.android",
+            appName = "Myntra",
+            title = myntraTitle,
+            text = myntraText,
+            postTime = System.currentTimeMillis(),
+            channelId = "deals",
+            isOngoing = true, // Sales countdown timer often marked ongoing
+            isClearable = true,
+            importance = 3,
+            showChronometer = true,
+            chronometerCountDown = true
+        )
+
+        val myntraEnriched = filterEngine.enrichWithMemoizedSignals(myntraNotif)
+        assertTrue("Myntra memoizedIsPromo must be true", myntraEnriched.memoizedIsPromo == true)
+        assertFalse("Myntra memoizedIsOtp must be false", myntraEnriched.memoizedIsOtp == true)
+        val myntraClassified = classifier.classify(myntraNotif, settings)
+        assertEquals("Myntra sale must not be classified as DELIVERY or OTP", NotificationIntent.NONE, myntraClassified.intent)
+        val myntraCat = filterEngine.classify(myntraNotif, settings)
+        assertEquals("Myntra filterCategory must be NORMAL", FilterCategory.NORMAL, myntraCat)
+
+        val myntraFastCancel = com.alauncher.app.service.NotificationListener.isFastPathCancelCandidate(
+            packageName = myntraNotif.packageName,
+            title = myntraNotif.title,
+            text = myntraNotif.text,
+            category = null,
+            isClearable = true,
+            isOngoing = true, // Ongoing sale timer!
+            unfilteredApps = emptySet(),
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true,
+            showChronometer = true,
+            chronometerCountDown = true
+        )
+        assertTrue("Myntra sale with ongoing chronometer must be fast-path cancelled", myntraFastCancel)
+
+        val myntraShouldCancel = com.alauncher.app.service.NotificationListener.shouldCancelNotification(
+            cat = myntraCat,
+            isClearable = true,
+            isOngoing = true,
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true,
+            isPromo = true,
+            isProtectedOngoing = false
+        )
+        assertTrue("Myntra shouldCancelNotification must be true", myntraShouldCancel)
+    }
+
+    @Test
+    fun testProtectedOngoingNotificationHelper() {
+        // Media playback
+        assertTrue(
+            "Media session must be protected ongoing",
+            com.alauncher.app.service.NotificationListener.isProtectedOngoingNotification(
+                isOngoing = true,
+                category = null,
+                hasMediaSession = true
+            )
+        )
+
+        // Navigation
+        assertTrue(
+            "Navigation category must be protected ongoing",
+            com.alauncher.app.service.NotificationListener.isProtectedOngoingNotification(
+                isOngoing = true,
+                category = android.app.Notification.CATEGORY_NAVIGATION
+            )
+        )
+
+        // Transport
+        assertTrue(
+            "Transport category must be protected ongoing",
+            com.alauncher.app.service.NotificationListener.isProtectedOngoingNotification(
+                isOngoing = true,
+                category = android.app.Notification.CATEGORY_TRANSPORT
+            )
+        )
+
+        // Phone call
+        assertTrue(
+            "Call category must be protected ongoing",
+            com.alauncher.app.service.NotificationListener.isProtectedOngoingNotification(
+                isOngoing = true,
+                category = android.app.Notification.CATEGORY_CALL
+            )
+        )
+
+        // Download progress bar
+        assertTrue(
+            "Download with progressMax > 0 must be protected ongoing",
+            com.alauncher.app.service.NotificationListener.isProtectedOngoingNotification(
+                isOngoing = true,
+                category = null,
+                progressMax = 100
+            )
+        )
+
+        // Ongoing shopping notification without protected traits must NOT be protected
+        assertFalse(
+            "Routine shopping timer is not protected ongoing",
+            com.alauncher.app.service.NotificationListener.isProtectedOngoingNotification(
+                isOngoing = true,
+                category = null,
+                hasMediaSession = false,
+                progressMax = -1
+            )
+        )
+
+        // Non-ongoing is never protected
+        assertFalse(
+            "Non-ongoing is not protected ongoing",
+            com.alauncher.app.service.NotificationListener.isProtectedOngoingNotification(
+                isOngoing = false,
+                category = android.app.Notification.CATEGORY_TRANSPORT
+            )
+        )
+    }
+
+    @Test
+    fun testChronometerShoppingVsRideFoodDisambiguation() {
+        // Uber or Zomato with ETA chronometer should NOT be treated as a sale promo
+        val isUberPromo = com.alauncher.app.domain.notification.NotificationFilterEngine.isPromotionalNotification(
+            packageName = "com.ubercab",
+            title = "Driver arriving in 5 mins",
+            text = "Toyota Camry",
+            showChronometer = true,
+            chronometerCountDown = true
+        )
+        assertFalse("Uber ETA chronometer must NOT be flagged as promo", isUberPromo)
+
+        val isZomatoPromo = com.alauncher.app.domain.notification.NotificationFilterEngine.isPromotionalNotification(
+            packageName = "com.application.zomato",
+            title = "Order on the way",
+            text = "Delivery partner is approaching your location",
+            showChronometer = true,
+            chronometerCountDown = true
+        )
+        assertFalse("Zomato ETA chronometer must NOT be flagged as promo", isZomatoPromo)
+
+        // Myntra with chronometer must be flagged as promo
+        val isMyntraPromo = com.alauncher.app.domain.notification.NotificationFilterEngine.isPromotionalNotification(
+            packageName = "com.myntra.android",
+            title = "Festive Deals",
+            text = "Deals live now",
+            showChronometer = true,
+            chronometerCountDown = true
+        )
+        assertTrue("Myntra sale countdown chronometer MUST be flagged as promo", isMyntraPromo)
+    }
+
+    @Test
+    fun testMutedRoutineOngoingNotificationPreservesProtection() {
+        // A muted (Quiet Hours) ongoing notification like a phone call or music must NOT be cancelled
+        val mutedOngoingProtected = com.alauncher.app.service.NotificationListener.shouldCancelNotification(
+            cat = FilterCategory.MUTED,
+            isClearable = true,
+            isOngoing = true,
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true,
+            isPromo = false,
+            isProtectedOngoing = true
+        )
+        assertFalse("Muted protected ongoing notification must not be cancelled", mutedOngoingProtected)
+
+        // Routine ongoing notification in Quiet Hours should also be preserved by invariant guard
+        val mutedOngoingRoutine = com.alauncher.app.service.NotificationListener.shouldCancelNotification(
+            cat = FilterCategory.MUTED,
+            isClearable = true,
+            isOngoing = true,
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true,
+            isPromo = false,
+            isProtectedOngoing = false
+        )
+        assertFalse("Muted ongoing routine notification must not be cancelled by invariant guard", mutedOngoingRoutine)
+
+        // Clearable muted non-ongoing notification MUST be cancelled
+        val mutedClearable = com.alauncher.app.service.NotificationListener.shouldCancelNotification(
+            cat = FilterCategory.MUTED,
+            isClearable = true,
+            isOngoing = false,
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true,
+            isPromo = false,
+            isProtectedOngoing = false
+        )
+        assertTrue("Muted clearable routine notification must be cancelled", mutedClearable)
+    }
+
+    @Test
+    fun testFastPathCancellationWithPromoInBigTextOrSubText() {
+        // Sticky/non-clearable notification where promo copy is only in bigText
+        val fastCancelWithBigText = com.alauncher.app.service.NotificationListener.isFastPathCancelCandidate(
+            packageName = "com.sample.shopping",
+            title = "Special Alert",
+            text = "Tap to open",
+            category = null,
+            isClearable = false, // Sticky push notification!
+            isOngoing = false,
+            unfilteredApps = emptySet(),
+            isDefaultLauncher = true,
+            notificationFilteringEnabled = true,
+            subText = "Deals",
+            bigText = "Get flat ₹500 off on your order today!"
+        )
+        assertTrue(
+            "Fast path must cancel sticky promo notification when discount phrase is in bigText",
+            fastCancelWithBigText
+        )
+    }
 }

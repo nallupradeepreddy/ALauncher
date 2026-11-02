@@ -110,6 +110,22 @@ class NotificationListener : NotificationListenerService() {
         private val parser = com.alauncher.app.domain.notification.NotificationParser()
 
         @VisibleForTesting
+        internal fun isProtectedOngoingNotification(
+            isOngoing: Boolean,
+            category: String?,
+            hasMediaSession: Boolean = false,
+            progressMax: Int = -1
+        ): Boolean {
+            if (!isOngoing) return false
+            return category == NotificationCompat.CATEGORY_TRANSPORT ||
+                   category == NotificationCompat.CATEGORY_NAVIGATION ||
+                   category == NotificationCompat.CATEGORY_PROGRESS ||
+                   category == NotificationCompat.CATEGORY_CALL ||
+                   progressMax > 0 ||
+                   hasMediaSession
+        }
+
+        @VisibleForTesting
         internal fun isFastPathCancelCandidate(
             packageName: String,
             title: String?,
@@ -120,11 +136,16 @@ class NotificationListener : NotificationListenerService() {
             unfilteredApps: Set<String>,
             meetingAllowedApps: Set<String> = cachedMeetingAllowedApps,
             isDefaultLauncher: Boolean,
-            notificationFilteringEnabled: Boolean = cachedNotificationFilteringEnabled
+            notificationFilteringEnabled: Boolean = cachedNotificationFilteringEnabled,
+            showChronometer: Boolean = false,
+            chronometerCountDown: Boolean = false,
+            hasMediaSession: Boolean = false,
+            progressMax: Int = -1,
+            subText: String? = null,
+            bigText: String? = null
         ): Boolean {
             if (!isDefaultLauncher) return false
             if (!notificationFilteringEnabled) return false
-            if (!isClearable || isOngoing) return false
             if (unfilteredApps.contains(packageName)) return false
 
             // Critical system categories should bypass early cancellation
@@ -143,9 +164,9 @@ class NotificationListener : NotificationListenerService() {
                 return false
             }
 
-            val titleStr = title ?: ""
-            val textStr = text ?: ""
-            val combinedText = if (titleStr.isNotBlank() && textStr.isNotBlank()) "$titleStr $textStr" else "$titleStr$textStr"
+            val combinedText = listOfNotNull(title, text, subText, bigText)
+                .filter { it.isNotBlank() }
+                .joinToString(" ")
 
             // Severe weather alert
             if (com.alauncher.app.domain.notification.NotificationParser.severeWeatherAlertRegex.containsMatchIn(combinedText)) {
@@ -167,6 +188,24 @@ class NotificationListener : NotificationListenerService() {
                 return false
             }
 
+            val isPromo = com.alauncher.app.domain.notification.NotificationFilterEngine.isPromotionalNotification(
+                packageName = packageName,
+                title = title,
+                text = text,
+                subText = subText,
+                bigText = bigText,
+                showChronometer = showChronometer,
+                chronometerCountDown = chronometerCountDown
+            )
+
+            // Protected ongoing tasks (media playback, navigation, system progress, phone call)
+            if (isProtectedOngoingNotification(isOngoing, category, hasMediaSession, progressMax)) {
+                return false
+            }
+
+            // Non-promo ongoing or non-clearable notifications bypass fast-path cancellation
+            if (!isPromo && (!isClearable || isOngoing)) return false
+
             return true
         }
 
@@ -176,11 +215,26 @@ class NotificationListener : NotificationListenerService() {
             isClearable: Boolean,
             isOngoing: Boolean,
             isDefaultLauncher: Boolean,
-            notificationFilteringEnabled: Boolean = cachedNotificationFilteringEnabled
+            notificationFilteringEnabled: Boolean = cachedNotificationFilteringEnabled,
+            isPromo: Boolean = false,
+            isProtectedOngoing: Boolean = false
         ): Boolean {
             if (!isDefaultLauncher) return false
-            return isClearable && !isOngoing && when {
-                cat == com.alauncher.app.model.FilterCategory.PRIORITY -> false
+            if (cat == com.alauncher.app.model.FilterCategory.PRIORITY) return false
+
+            // Protected ongoing tasks (media playback, calls, navigation, downloads) are never cancelled
+            if (isProtectedOngoing) return false
+
+            // Promotional notifications must ALWAYS be cancelled when filtering is enabled or in Focus/Quiet hours,
+            // even if they set isOngoing or FLAG_NO_CLEAR (a common spam tactic from shopping apps with countdowns).
+            if (isPromo) {
+                return notificationFilteringEnabled || cat == com.alauncher.app.model.FilterCategory.MUTED
+            }
+
+            // Invariant guard for routine non-promotional notifications: ongoing or non-clearable must never be cancelled
+            if (!isClearable || isOngoing) return false
+
+            return when {
                 cat == com.alauncher.app.model.FilterCategory.MUTED -> true
                 else -> notificationFilteringEnabled
             }
@@ -310,7 +364,13 @@ class NotificationListener : NotificationListenerService() {
                 unfilteredApps = cachedUnfilteredApps,
                 meetingAllowedApps = cachedMeetingAllowedApps,
                 isDefaultLauncher = isDefault,
-                notificationFilteringEnabled = cachedNotificationFilteringEnabled
+                notificationFilteringEnabled = cachedNotificationFilteringEnabled,
+                showChronometer = details.showChronometer,
+                chronometerCountDown = details.chronometerCountDown,
+                hasMediaSession = details.hasMediaSession,
+                progressMax = details.progressMax,
+                subText = details.subText,
+                bigText = details.bigText
             )
         ) {
             try {
@@ -332,12 +392,29 @@ class NotificationListener : NotificationListenerService() {
             val isProtectedApp = cachedUnfilteredApps.contains(packageName) ||
                 cachedMeetingAllowedApps.contains(packageName) ||
                 com.alauncher.app.domain.notification.NotificationConstants.CALENDAR_PKG_REGEX.containsMatchIn(packageName)
+            val isPromoSummary = com.alauncher.app.domain.notification.NotificationFilterEngine.isPromotionalNotification(
+                packageName = packageName,
+                title = title,
+                text = text,
+                subText = details.subText,
+                bigText = details.bigText,
+                showChronometer = details.showChronometer,
+                chronometerCountDown = details.chronometerCountDown
+            )
+            val isProtectedOngoingSummary = isProtectedOngoingNotification(
+                isOngoing = isOngoing,
+                category = notification.category,
+                hasMediaSession = details.hasMediaSession,
+                progressMax = details.progressMax
+            )
             val shouldCancelSummary = !isProtectedApp && shouldCancelNotification(
                 cat = com.alauncher.app.model.FilterCategory.NORMAL,
                 isClearable = isClearable,
                 isOngoing = isOngoing,
                 isDefaultLauncher = isDefault,
-                notificationFilteringEnabled = cachedNotificationFilteringEnabled
+                notificationFilteringEnabled = cachedNotificationFilteringEnabled,
+                isPromo = isPromoSummary,
+                isProtectedOngoing = isProtectedOngoingSummary
             )
             if (shouldCancelSummary) {
                 app?.applicationScope?.launch(Dispatchers.Main) {
@@ -395,12 +472,31 @@ class NotificationListener : NotificationListenerService() {
                         actionCodes = details.actionCodes
                     )
                     
+                    val isPromoNotif = com.alauncher.app.domain.notification.NotificationFilterEngine.isPromotionalNotification(
+                        packageName = packageName,
+                        title = title,
+                        text = text,
+                        subText = details.subText,
+                        bigText = details.bigText,
+                        showChronometer = details.showChronometer,
+                        chronometerCountDown = details.chronometerCountDown
+                    )
+
+                    val isProtectedOngoing = isProtectedOngoingNotification(
+                        isOngoing = isOngoing,
+                        category = notification.category,
+                        hasMediaSession = details.hasMediaSession,
+                        progressMax = details.progressMax
+                    )
+
                     val shouldCancel = shouldCancelNotification(
                         cat = cat,
                         isClearable = isClearable,
                         isOngoing = isOngoing,
                         isDefaultLauncher = isDefault,
-                        notificationFilteringEnabled = cachedNotificationFilteringEnabled
+                        notificationFilteringEnabled = cachedNotificationFilteringEnabled,
+                        isPromo = isPromoNotif,
+                        isProtectedOngoing = isProtectedOngoing
                     )
                     if (shouldCancel) {
                         withContext(Dispatchers.Main) {
@@ -474,6 +570,7 @@ class NotificationListener : NotificationListenerService() {
             val isGroupSummary = (notif.flags and Notification.FLAG_GROUP_SUMMARY) != 0
             
             val (title, text) = extractNotificationTitleAndText(notif)
+            val details = parseNotificationDetails(notif)
             if (isGroupSummary) {
                 if (isFastPathCancelCandidate(
                         packageName = pkg,
@@ -484,7 +581,13 @@ class NotificationListener : NotificationListenerService() {
                         isOngoing = isOngoing,
                         unfilteredApps = cachedUnfilteredApps,
                         meetingAllowedApps = cachedMeetingAllowedApps,
-                        isDefaultLauncher = isDefault
+                        isDefaultLauncher = isDefault,
+                        showChronometer = details.showChronometer,
+                        chronometerCountDown = details.chronometerCountDown,
+                        hasMediaSession = details.hasMediaSession,
+                        progressMax = details.progressMax,
+                        subText = details.subText,
+                        bigText = details.bigText
                     )
                 ) {
                     summaryKeysToCancel.add(sbn.key)
@@ -492,8 +595,6 @@ class NotificationListener : NotificationListenerService() {
                 return@mapNotNull null
             }
 
-            val details = parseNotificationDetails(notif)
-            
             SafeNotificationData(
                 key = sbn.key,
                 packageName = pkg,
@@ -553,12 +654,31 @@ class NotificationListener : NotificationListenerService() {
                             actionCodes = item.details.actionCodes
                         )
 
+                        val isPromoNotif = com.alauncher.app.domain.notification.NotificationFilterEngine.isPromotionalNotification(
+                            packageName = item.packageName,
+                            title = item.title,
+                            text = item.text,
+                            subText = item.details.subText,
+                            bigText = item.details.bigText,
+                            showChronometer = item.details.showChronometer,
+                            chronometerCountDown = item.details.chronometerCountDown
+                        )
+
+                        val isProtectedOngoing = isProtectedOngoingNotification(
+                            isOngoing = item.isOngoing,
+                            category = item.details.notificationCategory,
+                            hasMediaSession = item.details.hasMediaSession,
+                            progressMax = item.details.progressMax
+                        )
+
                         val shouldCancel = shouldCancelNotification(
                             cat = cat,
                             isClearable = item.isClearable,
                             isOngoing = item.isOngoing,
                             isDefaultLauncher = isDefault,
-                            notificationFilteringEnabled = cachedNotificationFilteringEnabled
+                            notificationFilteringEnabled = cachedNotificationFilteringEnabled,
+                            isPromo = isPromoNotif,
+                            isProtectedOngoing = isProtectedOngoing
                         )
                         if (shouldCancel) {
                             keysToCancel.add(item.key)
@@ -688,6 +808,7 @@ class NotificationListener : NotificationListenerService() {
 
             // Android OS-level category tag - CATEGORY_PROMO, CATEGORY_MESSAGE, CATEGORY_TRANSPORT etc.
             val notifCategory = notification.category
+            val hasMediaSession = extras?.containsKey(Notification.EXTRA_MEDIA_SESSION) == true
 
             // Collect any 4-8 digit codes advertised through actions (some apps expose OTPs this way).
             val actionCodes = mutableListOf<String>()
@@ -716,7 +837,8 @@ class NotificationListener : NotificationListenerService() {
                 subText = subText,
                 infoText = infoText,
                 notificationCategory = notifCategory,
-                actionCodes = actionCodes.distinct()
+                actionCodes = actionCodes.distinct(),
+                hasMediaSession = hasMediaSession
             )
         } catch (e: Exception) {
             Log.e("NotificationListener", "Unmarshalling error parsing notification details", e)
@@ -731,7 +853,8 @@ class NotificationListener : NotificationListenerService() {
                 subText = null,
                 infoText = null,
                 notificationCategory = notification.category,
-                actionCodes = emptyList()
+                actionCodes = emptyList(),
+                hasMediaSession = false
             )
         }
     }
@@ -747,7 +870,8 @@ class NotificationListener : NotificationListenerService() {
         val subText: String? = null,
         val infoText: String? = null,
         val notificationCategory: String? = null,
-        val actionCodes: List<String> = emptyList()
+        val actionCodes: List<String> = emptyList(),
+        val hasMediaSession: Boolean = false
     )
 
     private data class SafeNotificationData(

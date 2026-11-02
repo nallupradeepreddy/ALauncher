@@ -307,8 +307,13 @@ class NotificationParser {
             notification.title, notification.text, notification.bigText, notification.subText
         ).joinToString("\n").lowercase(Locale.ROOT)
         if (notification.actionCodes.isNotEmpty() && otpContextKeywords.any { bodyForContext.contains(it) }) {
-            // Prefer a 6-digit code if available (most common OTP length), else first.
-            return notification.actionCodes.firstOrNull { it.length == 6 } ?: notification.actionCodes.first()
+            // Promotional notifications must never extract action codes as authentic OTPs
+            val isPromoContext = NotificationConstants.PROMO_KEYWORD_REGEX.containsMatchIn(bodyForContext) ||
+                NotificationConstants.CONSOLIDATED_PROMOTIONAL_REGEX.containsMatchIn(bodyForContext)
+            if (!isPromoContext) {
+                // Prefer a 6-digit code if available (most common OTP length), else first.
+                return notification.actionCodes.firstOrNull { it.length == 6 } ?: notification.actionCodes.first()
+            }
         }
 
         // 2. Regex extraction over each rich-text field in priority order.

@@ -20,15 +20,15 @@ class NotificationFilterEngine(
     fun enrichWithMemoizedSignals(
         notification: LauncherNotification
     ): LauncherNotification {
-        val textToMatch = listOfNotNull(
-            notification.title,
-            notification.text,
-            notification.subText,
-            notification.bigText
-        ).joinToString(" ").lowercase()
-
-        val isPromo = NotificationConstants.PROMO_KEYWORD_REGEX.containsMatchIn(textToMatch) ||
-                      NotificationConstants.CONSOLIDATED_PROMOTIONAL_REGEX.containsMatchIn(textToMatch)
+        val isPromo = isPromotionalNotification(
+            packageName = notification.packageName,
+            title = notification.title,
+            text = notification.text,
+            subText = notification.subText,
+            bigText = notification.bigText,
+            showChronometer = notification.showChronometer,
+            chronometerCountDown = notification.chronometerCountDown
+        )
 
         val rawIntent = classifier.classifyIntrinsic(notification).first
         val isOtp = (rawIntent == NotificationIntent.OTP || parser.extractOtp(notification) != null)
@@ -120,5 +120,36 @@ class NotificationFilterEngine(
         }
 
         return FilterCategory.NORMAL
+    }
+
+    companion object {
+        /**
+         * Identifies whether a notification is promotional using static keyword regexes
+         * and sale countdown chronometer heuristics scoped strictly to shopping apps.
+         */
+        fun isPromotionalNotification(
+            packageName: String,
+            title: String?,
+            text: String?,
+            subText: String? = null,
+            bigText: String? = null,
+            showChronometer: Boolean = false,
+            chronometerCountDown: Boolean = false
+        ): Boolean {
+            val isChronometerPromo = (showChronometer || chronometerCountDown) &&
+                NotificationConstants.SHOPPING_PKG_REGEX.containsMatchIn(packageName)
+
+            if (isChronometerPromo) return true
+
+            val textToMatch = listOfNotNull(title, text, subText, bigText)
+                .filter { it.isNotBlank() }
+                .joinToString(" ")
+                .lowercase()
+
+            if (textToMatch.isBlank()) return false
+
+            return NotificationConstants.PROMO_KEYWORD_REGEX.containsMatchIn(textToMatch) ||
+                   NotificationConstants.CONSOLIDATED_PROMOTIONAL_REGEX.containsMatchIn(textToMatch)
+        }
     }
 }
