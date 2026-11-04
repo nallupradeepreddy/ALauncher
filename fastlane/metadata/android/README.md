@@ -8,7 +8,10 @@ fastlane/metadata/android/
 └── en-US/
     ├── title.txt               # App title (max 30 characters)
     ├── short_description.txt   # Short description / tagline (max 80 characters)
-    └── full_description.txt    # Full store description (max 4000 characters)
+    ├── full_description.txt    # Full store description (max 4000 characters)
+    └── images/
+        ├── icon.png            # 512x512 app icon
+        └── phoneScreenshots/   # Phone screenshots for store listing
 ```
 
 ## Play Store Console Configuration
