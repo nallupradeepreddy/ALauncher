@@ -70,16 +70,18 @@ android {
       isMinifyEnabled = true
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-      if (signingConfigs.getByName("release").storeFile != null) {
-        signingConfig = signingConfigs.getByName("release")
+      signingConfigs.findByName("release")?.let { releaseConfig ->
+        if (releaseConfig.storeFile != null) {
+          signingConfig = releaseConfig
+        }
       }
       ndk {
         debugSymbolLevel = "SYMBOL_TABLE"
       }
     }
     debug {
-      if (signingConfigs.findByName("debugConfig") != null) {
-        signingConfig = signingConfigs.getByName("debugConfig")
+      signingConfigs.findByName("debugConfig")?.let { debugConfig ->
+        signingConfig = debugConfig
       }
       enableUnitTestCoverage = true
     }
